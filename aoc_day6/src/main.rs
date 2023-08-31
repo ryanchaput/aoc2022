@@ -29,10 +29,16 @@ fn main() {
         handle_move(turn, &mut stacks);
     }
 
+    let mut result: Vec<char> = Vec::new();
+
     for list in stacks {
         let c = list.pop().expect("Expected a char");
-        println!("{c}");
+        result.push(c);
     }
+
+    let s: String = result.into_iter().collect();
+
+    println!("{s}");
 }
 
 // Deciphers each move, returns a tuple
