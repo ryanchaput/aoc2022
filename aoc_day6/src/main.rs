@@ -14,7 +14,7 @@ fn main() {
     let mut s8: Vec<char> = vec!['S', 'J', 'N', 'M', 'G', 'C'];
     let mut s9: Vec<char> = vec!['G', 'P', 'N', 'W', 'C', 'J', 'D', 'L'];
 
-    let mut stacks: [&mut Vec<char>; 9] = [&mut s1, &mut s2, &mut s3, &mut s4, &mut s5, &mut s6, &mut s7, &mut s8, &mut s9];
+    //let mut stacks: [&mut Vec<char>; 9] = [&mut s1, &mut s2, &mut s3, &mut s4, &mut s5, &mut s6, &mut s7, &mut s8, &mut s9];
     //let stack_ref = &mut stacks;
 
     let file_path = "day6_puzzle.txt";
@@ -24,17 +24,29 @@ fn main() {
     //let moves: Vec<&str> = moves_list.lines().collect();
 
     //println!("{:?}", moves);
-    for line in moves_list.lines() {
+    /*for line in moves_list.lines() {
         let turn = decipher_move(line);
         handle_move(turn, &mut stacks);
+    }*/
+
+    for line in moves_list.lines() {
+        let turn = decipher_move2(line);
+        
+        handle_move_9001(turn.0, &mut get_stack(turn.1), &mut get_stack(turn.2));
     }
 
     let mut result: Vec<char> = Vec::new();
 
-    for list in stacks {
-        let c = list.pop().expect("Expected a char");
+    for x in 1..9 {
+        let s = get_stack(x);
+        let c = s.pop().expect("Expected a char");
         result.push(c);
     }
+
+    /*for list in stacks {
+        let c = list.pop().expect("Expected a char");
+        result.push(c);
+    }*/
 
     let s: String = result.into_iter().collect();
 
@@ -51,6 +63,14 @@ fn decipher_move(m: &str) -> Move {
     values
 }
 
+fn decipher_move2(m: &str) -> (usize, usize, usize) {
+    let _nums: Vec<&str> = m.split(" ").collect();
+    let num1 = _nums[1].parse::<usize>().expect("Expected a num");
+    let num2 = _nums[3].parse::<usize>().expect("Expected a num");
+    let num3 = _nums[5].parse::<usize>().expect("Expected a num");
+    (num1, num2, num3)
+}
+
 // Handle each move with the three nums and the stacks array
 fn handle_move(turn: Move, stacks: &mut [&mut Vec<char>; 9]) -> () {
     let mut i = 0;
@@ -61,5 +81,18 @@ fn handle_move(turn: Move, stacks: &mut [&mut Vec<char>; 9]) -> () {
         let to: &mut Vec<char> = stacks[turn.2 - 1];
         to.push(e);
         i += 1;
+    }
+}
+
+// Handle the move described by part 2, where crates being moved maintain their order
+fn handle_move_9001(num: usize, from: &mut Vec<char>, to: &mut Vec<char>) -> () {
+
+    let mut i = num;
+
+    while i != 0 {
+        let length = from.len();
+        let c = from.remove(length - i);
+        to.push(c);
+        i = i - 1;
     }
 }
